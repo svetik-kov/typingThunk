@@ -1,7 +1,7 @@
 import {TaskActionsType, tasksReducer} from '../features/TodolistsList/tasks-reducer';
 import {TodolistActionsType, todolistsReducer} from '../features/TodolistsList/todolists-reducer';
 import {AnyAction, applyMiddleware, combineReducers, legacy_createStore} from 'redux'
-import thunkMiddleware, {ThunkDispatch} from 'redux-thunk'
+import thunkMiddleware, {ThunkAction, ThunkDispatch} from 'redux-thunk'
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 
 // объединяя reducer-ы с помощью combineReducers,
@@ -22,7 +22,13 @@ export const useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelecto
 
 export type AppActionsType=TaskActionsType| TodolistActionsType
 
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AppActionsType>
 
 // а это, чтобы можно было в консоли браузера обращаться к store в любой момент
 // @ts-ignore
 window.store = store;
+
+
+//документация типизации thunk:
+//https://redux.js.org/usage/usage-with-typescript#type-checking-redux-thunks
+//https://docs.google.com/document/d/1xg6ZLT3z7qswgC5Zj03o_efe-vAc9uUSXyEKfoVCQf4/edit#heading=h.pgm8onpxmgg8

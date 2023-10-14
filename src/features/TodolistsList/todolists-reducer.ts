@@ -1,6 +1,7 @@
 import {todolistsAPI, TodolistType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
-import {AppActionsType} from '../../app/store';
+import {AppActionsType, AppRootStateType, AppThunk} from '../../app/store';
+import {ThunkAction} from 'redux-thunk';
 
 const initialState: Array<TodolistDomainType> = []
 
@@ -37,7 +38,7 @@ export const changeTodolistFilterAC = (id: string, filter: FilterValuesType) => 
 export const setTodolistsAC = (todolists: Array<TodolistType>) => ({type: 'SET-TODOLISTS', todolists} as const)
 
 // thunks
-export const fetchTodolistsTC = () => {
+export const fetchTodolistsTC = ():AppThunk => {
     return (dispatch: Dispatch<AppActionsType>) => {
         todolistsAPI.getTodolists()
             .then((res) => {
@@ -45,24 +46,26 @@ export const fetchTodolistsTC = () => {
             })
     }
 }
-export const removeTodolistTC = (todolistId: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+export const removeTodolistTC = (todolistId: string):AppThunk => {
+    return (dispatch) => {
         todolistsAPI.deleteTodolist(todolistId)
             .then((res) => {
                 dispatch(removeTodolistAC(todolistId))
             })
     }
 }
-export const addTodolistTC = (title: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+//типизация thunk если нам нужно задиспачить другую санку
+export const addTodolistTC = (title: string):AppThunk => {
+    return (dispatch) => {
         todolistsAPI.createTodolist(title)
             .then((res) => {
+                //dispatch(fetchTodolistsTC())
                 dispatch(addTodolistAC(res.data.data.item))
             })
     }
 }
-export const changeTodolistTitleTC = (id: string, title: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+export const changeTodolistTitleTC = (id: string, title: string):AppThunk => {
+    return (dispatch) => {
         todolistsAPI.updateTodolist(id, title)
             .then((res) => {
                 dispatch(changeTodolistTitleAC(id, title))
