@@ -5,7 +5,7 @@ import {ThunkAction} from 'redux-thunk';
 
 const initialState: Array<TodolistDomainType> = []
 
-export const todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: AppActionsType): Array<TodolistDomainType> => {
+export const todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: TodolistActionsType): Array<TodolistDomainType> => {
     switch (action.type) {
         case 'REMOVE-TODOLIST':
             return state.filter(tl => tl.id !== action.id)
@@ -38,14 +38,24 @@ export const changeTodolistFilterAC = (id: string, filter: FilterValuesType) => 
 export const setTodolistsAC = (todolists: Array<TodolistType>) => ({type: 'SET-TODOLISTS', todolists} as const)
 
 // thunks
-export const fetchTodolistsTC = ():AppThunk => {
-    return (dispatch: Dispatch<AppActionsType>) => {
+/*export const fetchTodolistsTC = ():AppThunk => {
+    return (dispatch) => {
         todolistsAPI.getTodolists()
             .then((res) => {
                 dispatch(setTodolistsAC(res.data))
             })
     }
+}*/
+export const fetchTodolistsTC = ():AppThunk =>async dispatch => {
+    try{
+        const res=await todolistsAPI.getTodolists()
+        dispatch(setTodolistsAC(res.data))
+    }
+   catch (e) {
+       throw new Error(e as string)
+   }
 }
+
 export const removeTodolistTC = (todolistId: string):AppThunk => {
     return (dispatch) => {
         todolistsAPI.deleteTodolist(todolistId)
